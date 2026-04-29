@@ -189,7 +189,7 @@ const EXP_CATS=[
   {n:'伙食費',e:'🍱'},{n:'買菜費用',e:'🛒'},{n:'日用雜貨',e:'🧴'},
   {n:'教育教養費',e:'📚'},{n:'治裝費',e:'👔'},{n:'醫療費',e:'🏥'},
   {n:'美髮費',e:'💇'},{n:'交通費',e:'🚌'},{n:'清潔費',e:'🧹'},
-  {n:'喜慶交際費',e:'🎉'},{n:'保險費',e:'🛡'},{n:'稅金',e:'📋'},{n:'其他支出',e:'📦'}
+  {n:'喜慶交際費',e:'🎉'},{n:'保險費',e:'🛡'},{n:'稅金',e:'📋'},{n:'運動',e:'🏃'},{n:'其他支出',e:'📦'}
 ];
 const INC_CATS=[
   {n:'薪水（夫）',e:'💼'},{n:'薪水（妻）',e:'💼'},{n:'年終獎金',e:'🎯'},
@@ -199,7 +199,7 @@ const INC_CATS=[
 const CAT_COLOR={
   '伙食費':'#e24b4a','買菜費用':'#ba7517','日用雜貨':'#d4537e','教育教養費':'#639922',
   '治裝費':'#7f77dd','醫療費':'#1d9e75','美髮費':'#5dcaa5','交通費':'#378add',
-  '清潔費':'#888780','喜慶交際費':'#d85a30','保險費':'#0f6e56','稅金':'#533ab7','其他支出':'#3c3489',
+  '清潔費':'#888780','喜慶交際費':'#d85a30','保險費':'#0f6e56','稅金':'#533ab7','運動':'#2e86ab','其他支出':'#3c3489',
   '薪水（夫）':'#185fa5','薪水（妻）':'#3b6d11','年終獎金':'#ba7517','其他獎金':'#854f0b',
   '傷病補貼':'#1d9e75','發票中獎':'#d4537e','政府津貼':'#533ab7','保險賠付':'#0f6e56',
   '租金':'#5dcaa5','其他收入':'#888780'
@@ -451,11 +451,20 @@ function r2Daily(){
     const d=parseInt(String(r.date).split('-')[2])-1;
     if(d>=0&&d<days){if(r.type==='expense')dayE[d]+=Number(r.amount);else dayI[d]+=Number(r.amount);}
   });
-  // Place each fixed item on its designated day
+  // Place each fixed item on its designated date
   fixeds.forEach(f=>{
-    const d=Math.min(Number(f.day)||1, days)-1;
-    if(f.type==='expense') dayE[d]+=Number(f.amount);
-    else dayI[d]+=Number(f.amount);
+    let d;
+    if(f.date){
+      // Check if it's in current month
+      const fm=f.date.slice(0,7);
+      d=fm===mk(curM) ? parseInt(f.date.slice(8))-1 : -1;
+    } else {
+      d=Math.min(Number(f.day)||1, days)-1;
+    }
+    if(d>=0&&d<days){
+      if(f.type==='expense') dayE[d]+=Number(f.amount);
+      else dayI[d]+=Number(f.amount);
+    }
   });
   const maxE=Math.max(...dayE,1);
   const rows=dayE.map((v,i)=>({v,inc:dayI[i],i})).filter(x=>x.v>0||x.inc>0);
@@ -622,7 +631,7 @@ function r3(){
         const c=f.type==='income'?'#3b6d11':'#a32d2d';
         return `<div class="rec-row">
           <div class="rec-left"><div class="rec-dot" style="background:${c}"></div>
-            <div><div class="rec-name">${f.name}</div><div class="rec-sub">每月 ${f.day} 日・${f.cat}</div></div>
+            <div><div class="rec-name">${f.name}</div><div class="rec-sub">${f.date?f.date:('每月'+f.day+'日')}・${f.cat}</div></div>
           </div>
           <div class="rec-right">
             <div class="rec-amt" style="color:${c}">${f.type==='income'?'+':'-'}${fmt(f.amount)}</div>
@@ -1027,8 +1036,8 @@ function openFixed(){
     +'<input class="finput" type="number" id="ra" placeholder="0" inputmode="numeric">'
     +'<label class="flabel">類別</label>'
     +'<select class="finput" id="rc">'+catOpts+'</select>'
-    +'<label class="flabel">日期（當月幾號）</label>'
-    +'<input class="finput" type="number" id="rd" placeholder="5" min="1" max="28" inputmode="numeric">'
+    +'<label class="flabel">日期</label>'
+    +'<input class="finput" type="date" id="rd" value="'+new Date().toISOString().slice(0,10)+'">'
     +'<button class="save-btn" onclick="saveFixed()">儲存</button>';
   document.getElementById('mbox').innerHTML=html;
   document.getElementById('ov').classList.add('show');
@@ -1044,9 +1053,10 @@ async function saveFixed(){
   const name=document.getElementById('rn').value.trim();
   const amt=parseFloat(document.getElementById('ra').value);
   const cat=document.getElementById('rc').value;
-  const day=parseInt(document.getElementById('rd').value)||1;
-  if(!name||!amt){alert('請填入名稱和金額');return;}
-  const f={name,type:rType,cat,amount:amt,day:Math.min(28,Math.max(1,day))};
+  const dateVal=document.getElementById('rd').value;
+  if(!name||!amt||!dateVal){alert('請填入名稱、金額和日期');return;}
+  const day=parseInt(dateVal.split('-')[2])||1;
+  const f={name,type:rType,cat,amount:amt,day,date:dateVal};
   try{const res=await api('addFixed',{fixed:f});f.id=res.id;}catch(e){f.id=Date.now().toString();}
   fixeds.push(f);
   localStorage.setItem('fixeds',JSON.stringify(fixeds));
