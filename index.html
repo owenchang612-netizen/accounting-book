@@ -46,9 +46,9 @@ button{font-family:inherit;cursor:pointer}
 .nav-btn{background:none;border:.5px solid var(--border);border-radius:8px;padding:5px 12px;font-size:18px;color:var(--text2)}
 .month-lbl{font-size:24px;font-weight:700;min-width:96px;text-align:center}
 .add-btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:18px;font-weight:700}
-.tabs{display:flex}
-.tab{flex:1;text-align:center;padding:12px 0 14px;font-size:17px;color:var(--text3);border-bottom:2px solid transparent}
-.tab.on{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.tabs{display:flex;background:var(--tab-bg)}
+.tab{flex:1;text-align:center;padding:12px 2px 14px;font-size:15px;color:var(--tab-text);border-bottom:3px solid transparent;font-weight:600;transition:background .2s,color .2s}
+.tab.on{color:var(--tab-active);border-bottom-color:var(--tab-active);background:var(--tab-active-bg);font-weight:800}
 .section{padding:14px 16px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .metric{background:var(--surface);border-radius:var(--radius);padding:13px 15px;border:.5px solid var(--border)}
@@ -334,11 +334,16 @@ function txnRow(r,showDel=false){
 // ── Tab 0 Overview ───────────────────────────
 function r0(){
   const rs=mRecs();
-  const inc=rs.filter(r=>r.type==='income').reduce((s,r)=>s+Number(r.amount),0);
-  const exp=rs.filter(r=>r.type==='expense').reduce((s,r)=>s+Number(r.amount),0);
+  // Fixed items count as monthly income/expense
+  const fixedInc=fixeds.filter(f=>f.type==='income').reduce((s,f)=>s+Number(f.amount),0);
+  const fixedExp=fixeds.filter(f=>f.type==='expense').reduce((s,f)=>s+Number(f.amount),0);
+  const inc=rs.filter(r=>r.type==='income').reduce((s,r)=>s+Number(r.amount),0)+fixedInc;
+  const exp=rs.filter(r=>r.type==='expense').reduce((s,r)=>s+Number(r.amount),0)+fixedExp;
   const bal=inc-exp;
   const cm={};
   rs.filter(r=>r.type==='expense').forEach(r=>{cm[r.cat]=(cm[r.cat]||0)+Number(r.amount);});
+  // Also add fixed expenses to category map
+  fixeds.filter(f=>f.type==='expense').forEach(f=>{cm[f.cat]=(cm[f.cat]||0)+Number(f.amount);});
   const cats=Object.keys(cm).sort((a,b)=>cm[b]-cm[a]);
   const colors=cats.map(c=>CAT_COLOR[c]||'#888');
   const total=cats.reduce((s,c)=>s+cm[c],0);
@@ -446,6 +451,12 @@ function r2Daily(){
     const d=parseInt(String(r.date).split('-')[2])-1;
     if(d>=0&&d<days){if(r.type==='expense')dayE[d]+=Number(r.amount);else dayI[d]+=Number(r.amount);}
   });
+  // Place each fixed item on its designated day
+  fixeds.forEach(f=>{
+    const d=Math.min(Number(f.day)||1, days)-1;
+    if(f.type==='expense') dayE[d]+=Number(f.amount);
+    else dayI[d]+=Number(f.amount);
+  });
   const maxE=Math.max(...dayE,1);
   const rows=dayE.map((v,i)=>({v,inc:dayI[i],i})).filter(x=>x.v>0||x.inc>0);
   document.getElementById('t2').innerHTML=`
@@ -483,18 +494,21 @@ function r2Monthly(){
     months.push({key:mk(d),lbl:(d.getMonth()+1)+'月',inc:0,exp:0});
   }
   // gather all stored records across months
+  const fixedIncM=fixeds.filter(f=>f.type==='income').reduce((s,f)=>s+Number(f.amount),0);
+  const fixedExpM=fixeds.filter(f=>f.type==='expense').reduce((s,f)=>s+Number(f.amount),0);
   months.forEach(m=>{
     const stored=JSON.parse(localStorage.getItem('recs_'+m.key)||'[]');
     stored.forEach(r=>{
       if(r.type==='income') m.inc+=Number(r.amount);
       else m.exp+=Number(r.amount);
     });
+    m.inc+=fixedIncM;
+    m.exp+=fixedExpM;
   });
-  // also count current loaded recs
   const cm=mk(curM);
   const cur=months.find(m=>m.key===cm);
   if(cur){
-    cur.inc=0;cur.exp=0;
+    cur.inc=fixedIncM;cur.exp=fixedExpM;
     recs.forEach(r=>{if(r.type==='income')cur.inc+=Number(r.amount);else cur.exp+=Number(r.amount);});
   }
 
@@ -538,17 +552,31 @@ function r2Yearly(){
   // gather all years from localStorage keys
   const allKeys=Object.keys(localStorage).filter(k=>k.startsWith('recs_'));
   const yearMap={};
+  // Count months per year for fixed items
+  const yearMonths={};
   allKeys.forEach(k=>{
     const yr=k.replace('recs_','').slice(0,4);
     if(!yearMap[yr])yearMap[yr]={inc:0,exp:0};
+    if(!yearMonths[yr])yearMonths[yr]=0;
+    yearMonths[yr]++;
     const rs=JSON.parse(localStorage.getItem(k)||'[]');
     rs.forEach(r=>{if(r.type==='income')yearMap[yr].inc+=Number(r.amount);else yearMap[yr].exp+=Number(r.amount);});
   });
-  // also include current loaded recs
+  // Yearly trend uses ONLY actual recorded transactions (no projection)
+  // Fixed items are counted when they appear as actual recs in localStorage
   const cy=String(curM.getFullYear());
   if(!yearMap[cy])yearMap[cy]={inc:0,exp:0};
+  // Override current year with live loaded recs (already includes any fixed recs entered)
   yearMap[cy].inc=0;yearMap[cy].exp=0;
   recs.forEach(r=>{if(r.type==='income')yearMap[cy].inc+=Number(r.amount);else yearMap[cy].exp+=Number(r.amount);});
+  // For current year also add fixed items as they represent this year's standing amounts
+  // Sum all fixed items once (as user has set them - their actual current amounts)
+  const fixedIncY=fixeds.filter(f=>f.type==='income').reduce((s,f)=>s+Number(f.amount),0);
+  const fixedExpY=fixeds.filter(f=>f.type==='expense').reduce((s,f)=>s+Number(f.amount),0);
+  yearMap[cy].inc+=fixedIncY;
+  yearMap[cy].exp+=fixedExpY;
+  // For past years: use only what was actually recorded in localStorage
+  // (fixed items from past years are whatever was stored as transactions)
 
   const years=Object.keys(yearMap).sort();
   const expData=years.map(y=>yearMap[y].exp);
@@ -594,7 +622,7 @@ function r3(){
         const c=f.type==='income'?'#3b6d11':'#a32d2d';
         return `<div class="rec-row">
           <div class="rec-left"><div class="rec-dot" style="background:${c}"></div>
-            <div><div class="rec-name">${f.name}</div><div class="rec-sub">每月 ${f.day} 日 · ${f.cat}</div></div>
+            <div><div class="rec-name">${f.name}</div><div class="rec-sub">每月 ${f.day} 日・${f.cat}</div></div>
           </div>
           <div class="rec-right">
             <div class="rec-amt" style="color:${c}">${f.type==='income'?'+':'-'}${fmt(f.amount)}</div>
@@ -986,37 +1014,39 @@ function r5(){
 // ── Add Fixed ────────────────────────────────
 function openFixed(){
   rType='expense';
-  document.getElementById('mbox').innerHTML=`
-    <button class="close-x" onclick="closeOv()">×</button>
-    <div class="modal-title">新增固定項目</div>
-    <div class="type-row">
-      <button class="type-btn ae" id="rbe" onclick="setRT('expense')">固定支出</button>
-      <button class="type-btn" id="rbi" onclick="setRT('income')">固定收入</button>
-    </div>
-    <label class="flabel">項目名稱</label>
-    <input class="finput" type="text" id="rn" placeholder="例：房租、薪水">
-    <label class="flabel">金額（NT$）</label>
-    <input class="finput" type="number" id="ra" placeholder="0" inputmode="numeric">
-    <label class="flabel">類別</label>
-    <select class="finput" id="rc">${EXP_CATS.map(c=>`<option>${c.n}</option>`).join('')}</select>
-    <label class="flabel">每月幾號（1–28）</label>
-    <input class="finput" type="number" id="rd" placeholder="5" min="1" max="28" inputmode="numeric">
-    <button class="save-btn" onclick="saveFixed()">儲存</button>`;
+  const catOpts=EXP_CATS.map(x=>'<option>'+x.n+'</option>').join('');
+  const html='<button class="close-x" onclick="closeOv()">×</button>'
+    +'<div class="modal-title">新增固定項目</div>'
+    +'<div class="type-row">'
+    +'<button class="type-btn ae" id="rbe" onclick="setRT(&quot;expense&quot;)">固定支出</button>'
+    +'<button class="type-btn" id="rbi" onclick="setRT(&quot;income&quot;)">固定收入</button>'
+    +'</div>'
+    +'<label class="flabel">項目名稱</label>'
+    +'<input class="finput" type="text" id="rn" placeholder="例：房租、薪水、保險費">'
+    +'<label class="flabel">金額（NT$）</label>'
+    +'<input class="finput" type="number" id="ra" placeholder="0" inputmode="numeric">'
+    +'<label class="flabel">類別</label>'
+    +'<select class="finput" id="rc">'+catOpts+'</select>'
+    +'<label class="flabel">日期（當月幾號）</label>'
+    +'<input class="finput" type="number" id="rd" placeholder="5" min="1" max="28" inputmode="numeric">'
+    +'<button class="save-btn" onclick="saveFixed()">儲存</button>';
+  document.getElementById('mbox').innerHTML=html;
   document.getElementById('ov').classList.add('show');
 }
 function setRT(t){
   rType=t;
   document.getElementById('rbe').className='type-btn'+(t==='expense'?' ae':'');
   document.getElementById('rbi').className='type-btn'+(t==='income'?' ai':'');
-  document.getElementById('rc').innerHTML=(t==='expense'?EXP_CATS:INC_CATS).map(c=>`<option>${c.n}</option>`).join('');
+  const cats=t==='expense'?EXP_CATS:INC_CATS;
+  document.getElementById('rc').innerHTML=cats.map(x=>'<option>'+x.n+'</option>').join('');
 }
 async function saveFixed(){
   const name=document.getElementById('rn').value.trim();
   const amt=parseFloat(document.getElementById('ra').value);
   const cat=document.getElementById('rc').value;
-  const day=parseInt(document.getElementById('rd').value);
-  if(!name||!amt||!day){alert('請填入所有欄位');return;}
-  const f={name,type:rType,cat,amount:amt,day};
+  const day=parseInt(document.getElementById('rd').value)||1;
+  if(!name||!amt){alert('請填入名稱和金額');return;}
+  const f={name,type:rType,cat,amount:amt,day:Math.min(28,Math.max(1,day))};
   try{const res=await api('addFixed',{fixed:f});f.id=res.id;}catch(e){f.id=Date.now().toString();}
   fixeds.push(f);
   localStorage.setItem('fixeds',JSON.stringify(fixeds));
