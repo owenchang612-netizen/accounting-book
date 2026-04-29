@@ -18,12 +18,14 @@
   --holiday:#fff8e6;--holiday-border:#f5a623;
   --special:#ddeeff;--special-border:#3266ad;
   --radius:12px;--safe-b:env(safe-area-inset-bottom,0px);
+  --tab-bg:#dde3ec;--tab-text:#8899aa;--tab-active:#1a6fcc;--tab-active-bg:#eef5ff;
 }
 [data-theme="dark"]{
   --bg:#0d1f2d;--surface:#152535;--border:rgba(100,170,220,0.15);
   --text1:#f0f0f0;--text2:#99b8cc;--text3:#506070;
   --holiday:#2a1f00;--holiday-border:#f5a623;
   --special:#001a33;--special-border:#5b9bd5;
+  --tab-bg:#1a3d2a;--tab-text:#88c8a0;--tab-active:#ffffff;--tab-active-bg:#256040;
 }
 @media(prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
@@ -31,6 +33,7 @@
     --text1:#f0f0f0;--text2:#99b8cc;--text3:#506070;
     --holiday:#2a1f00;--holiday-border:#f5a623;
     --special:#001a33;--special-border:#5b9bd5;
+    --tab-bg:#1a3d2a;--tab-text:#88c8a0;--tab-active:#ffffff;--tab-active-bg:#256040;
   }
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -40,56 +43,56 @@ button{font-family:inherit;cursor:pointer}
 .topbar{background:var(--surface);border-bottom:.5px solid var(--border);padding:14px 16px 0;position:sticky;top:0;z-index:50}
 .topbar-row{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px}
 .nav-group{display:flex;align-items:center;gap:8px}
-.nav-btn{background:none;border:.5px solid var(--border);border-radius:8px;padding:5px 12px;font-size:16px;color:var(--text2)}
-.month-lbl{font-size:20px;font-weight:600;min-width:88px;text-align:center}
-.add-btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:8px 16px;font-size:16px;font-weight:600}
+.nav-btn{background:none;border:.5px solid var(--border);border-radius:8px;padding:5px 12px;font-size:18px;color:var(--text2)}
+.month-lbl{font-size:24px;font-weight:700;min-width:96px;text-align:center}
+.add-btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:18px;font-weight:700}
 .tabs{display:flex}
-.tab{flex:1;text-align:center;padding:8px 0 10px;font-size:15px;color:var(--text3);border-bottom:2px solid transparent}
+.tab{flex:1;text-align:center;padding:12px 0 14px;font-size:17px;color:var(--text3);border-bottom:2px solid transparent}
 .tab.on{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
 .section{padding:14px 16px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .metric{background:var(--surface);border-radius:var(--radius);padding:13px 15px;border:.5px solid var(--border)}
-.metric-lbl{font-size:13px;color:var(--text3);margin-bottom:5px}
-.metric-val{font-size:22px;font-weight:700}
+.metric-lbl{font-size:16px;color:var(--text3);margin-bottom:6px}
+.metric-val{font-size:28px;font-weight:800}
 .c-inc{color:#185fa5}.c-exp{color:var(--red)}.c-pos{color:var(--green)}.c-neg{color:var(--red)}.c-n{color:var(--text1)}
 .card{background:var(--surface);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;border:.5px solid var(--border)}
-.card-title{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:18px;font-weight:700;color:var(--text2);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
 .legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
-.leg{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text2)}
+.leg{display:flex;align-items:center;gap:5px;font-size:16px;color:var(--text2)}
 .leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .chart-wrap{position:relative;width:100%;height:200px}
 .txn-list{display:flex;flex-direction:column;gap:7px}
 .txn{display:flex;align-items:center;gap:11px;padding:10px 14px;background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius)}
 .txn-ico{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
 .txn-info{flex:1;min-width:0}
-.txn-name{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.txn-meta{font-size:13px;color:var(--text3);margin-top:2px}
-.txn-amt{font-size:15px;font-weight:700;flex-shrink:0}
+.txn-name{font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.txn-meta{font-size:15px;color:var(--text3);margin-top:3px}
+.txn-amt{font-size:18px;font-weight:700;flex-shrink:0}
 .txn-del{background:none;border:none;color:var(--text3);font-size:18px;padding:0 2px;flex-shrink:0}
 .search-row{margin-bottom:10px}
-.search-row input{width:100%;border:.5px solid var(--border);border-radius:10px;padding:9px 12px;font-size:16px;background:var(--surface);color:var(--text1)}
+.search-row input{width:100%;border:.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:18px;background:var(--surface);color:var(--text1)}
 .filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.chip{padding:5px 13px;border:.5px solid var(--border);border-radius:20px;font-size:14px;color:var(--text2);background:none}
+.chip{padding:8px 16px;border:.5px solid var(--border);border-radius:20px;font-size:16px;color:var(--text2);background:none}
 .chip.on{background:#e6f1fb;border-color:var(--blue);color:#0c447c;font-weight:600}
 .daily-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
-.day-lbl{font-size:13px;color:var(--text3);width:30px;text-align:right;flex-shrink:0}
+.day-lbl{font-size:15px;color:var(--text3);width:36px;text-align:right;flex-shrink:0}
 .bar-wrap{flex:1;height:14px;background:var(--bg);border-radius:4px;overflow:hidden}
 .bar-fill{height:100%;background:var(--blue);border-radius:4px}
-.day-val{font-size:13px;color:var(--text2);width:62px;text-align:right;flex-shrink:0}
+.day-val{font-size:15px;color:var(--text2);width:72px;text-align:right;flex-shrink:0}
 .rec-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:.5px solid var(--border)}
 .rec-row:last-child{border-bottom:none}
 .rec-left{display:flex;align-items:center;gap:10px}
 .rec-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.rec-name{font-size:15px}
-.rec-sub{font-size:13px;color:var(--text3);margin-top:1px}
+.rec-name{font-size:18px}
+.rec-sub{font-size:15px;color:var(--text3);margin-top:2px}
 .rec-right{display:flex;align-items:center;gap:8px}
-.rec-amt{font-size:15px;font-weight:700}
+.rec-amt{font-size:18px;font-weight:700}
 
 /* ── Calendar ── */
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:6px}
-.cal-hdr{font-size:12px;color:var(--text3);text-align:center;padding:2px 0;font-weight:600}
+.cal-hdr{font-size:15px;color:var(--text3);text-align:center;padding:4px 0;font-weight:700}
 .cal-hdr.sun{color:#c0392b}.cal-hdr.sat{color:#2980b9}
-.cal-day{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:14px;position:relative;cursor:pointer;border:.5px solid transparent;transition:background .15s}
+.cal-day{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:17px;position:relative;cursor:pointer;border:.5px solid transparent;transition:background .15s}
 .cal-day:hover{background:var(--bg)}
 .cal-day.today{background:var(--blue)!important;color:#fff!important;font-weight:700}
 .cal-day.today .cal-dot{background:#fff!important}
@@ -106,33 +109,33 @@ button{font-family:inherit;cursor:pointer}
 .cal-tooltip{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#333;color:#fff;font-size:10px;padding:3px 7px;border-radius:6px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s;z-index:10;margin-bottom:3px}
 .cal-day:hover .cal-tooltip{opacity:1}
 .cal-legend{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
-.cal-leg{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text2)}
+.cal-leg{display:flex;align-items:center;gap:5px;font-size:15px;color:var(--text2)}
 .cal-leg-box{width:12px;height:12px;border-radius:3px;flex-shrink:0}
 
 /* ── Special days mgmt ── */
 .spec-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:.5px solid var(--border)}
 .spec-item:last-child{border-bottom:none}
 .spec-emoji{font-size:18px;margin-right:8px}
-.spec-name{font-size:15px;font-weight:500}
-.spec-date{font-size:13px;color:var(--text3);margin-top:1px}
+.spec-name{font-size:18px;font-weight:700}
+.spec-date{font-size:15px;color:var(--text3);margin-top:2px}
 
 /* ── Modal ── */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:flex-end;justify-content:center}
 .overlay.show{display:flex}
 .modal{background:var(--surface);border-radius:18px 18px 0 0;padding:20px 20px calc(20px + var(--safe-b));width:100%;max-width:430px;max-height:90vh;overflow-y:auto}
-.modal-title{font-size:20px;font-weight:700;margin-bottom:16px}
+.modal-title{font-size:24px;font-weight:800;margin-bottom:18px}
 .close-x{float:right;background:none;border:none;font-size:22px;color:var(--text3);line-height:1;margin-top:-2px}
 .type-row{display:flex;gap:8px;margin-bottom:14px}
-.type-btn{flex:1;padding:8px;border:.5px solid var(--border);border-radius:10px;background:none;font-size:16px;color:var(--text2)}
+.type-btn{flex:1;padding:8px;border:.5px solid var(--border);border-radius:10px;background:none;font-size:18px;color:var(--text2)}
 .type-btn.ae{background:#fcebeb;border-color:var(--red);color:#791f1f;font-weight:600}
 .type-btn.ai{background:#eaf3de;border-color:var(--green);color:#27500a;font-weight:600}
-.flabel{font-size:14px;color:var(--text2);margin-bottom:5px;display:block;margin-top:12px}
-.finput{width:100%;border:.5px solid var(--border);border-radius:10px;padding:9px 12px;font-size:17px;background:var(--surface);color:var(--text1)}
+.flabel{font-size:17px;color:var(--text2);margin-bottom:6px;display:block;margin-top:14px}
+.finput{width:100%;border:.5px solid var(--border);border-radius:10px;padding:11px 14px;font-size:20px;background:var(--surface);color:var(--text1)}
 .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px}
-.cat-btn{padding:8px 4px;border:.5px solid var(--border);border-radius:10px;background:none;font-size:13px;color:var(--text2);text-align:center;line-height:1.4}
+.cat-btn{padding:8px 4px;border:.5px solid var(--border);border-radius:10px;background:none;font-size:15px;color:var(--text2);text-align:center;line-height:1.5}
 .cat-btn.on{border-color:var(--blue);background:#e6f1fb;color:#0c447c;font-weight:600}
-.save-btn{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:12px;font-size:18px;font-weight:700;margin-top:16px}
-.ghost-btn{width:100%;padding:12px;background:var(--bg);color:var(--text1);border:.5px solid var(--border);border-radius:12px;font-size:17px;font-weight:600;margin-top:10px}
+.save-btn{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:12px;font-size:21px;font-weight:800;margin-top:18px}
+.ghost-btn{width:100%;padding:12px;background:var(--bg);color:var(--text1);border:.5px solid var(--border);border-radius:12px;font-size:19px;font-weight:600;margin-top:12px}
 select.finput{appearance:none}
 .emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-top:4px}
 .emoji-btn{font-size:20px;padding:6px;border:.5px solid var(--border);border-radius:8px;background:none;cursor:pointer;text-align:center}
@@ -140,8 +143,8 @@ select.finput{appearance:none}
 .sync-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px}
 .sync-ok{background:var(--green)}.sync-err{background:var(--red)}.sync-ing{background:#f5a623;animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.sync-bar{font-size:13px;color:var(--text3);padding:4px 16px 8px;display:flex;align-items:center}
-.empty{text-align:center;color:var(--text3);font-size:15px;padding:20px 0}
+.sync-bar{font-size:15px;color:var(--text3);padding:4px 16px 8px;display:flex;align-items:center}
+.empty{text-align:center;color:var(--text3);font-size:17px;padding:22px 0}
 </style>
 </head>
 <body>
@@ -341,29 +344,33 @@ function r0(){
   const total=cats.reduce((s,c)=>s+cm[c],0);
   const recent=rs.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,5);
 
-  // Upcoming special days this month
+  // Month specials & holidays for overview
   const m=mk(curM);
-  const upcomingSpec=specials.filter(s=>{
-    const md=s.date.slice(5);
-    return (m+'-'+md).startsWith(m);
-  }).sort((a,b)=>a.date.slice(5).localeCompare(b.date.slice(5)));
+  const mo=curM.getMonth()+1, y2=curM.getFullYear();
+  const daysInMo=new Date(y2,mo,0).getDate();
+  const mHols=[];
+  for(let d=1;d<=daysInMo;d++){
+    const ds=y2+'-'+String(mo).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    if(TW_HOLIDAYS[ds]) mHols.push({day:d,name:TW_HOLIDAYS[ds]});
+  }
+  const mSpec=specials.filter(s=>parseInt(s.date.slice(5,7))===mo)
+    .map(s=>({...s,day:parseInt(s.date.slice(8))})).sort((a,b)=>a.day-b.day);
+  const hasCalInfo=mHols.length||mSpec.length;
 
   document.getElementById('t0').innerHTML=`
     <div class="grid2">
       <div class="metric"><div class="metric-lbl">本月收入</div><div class="metric-val c-inc">${fmt(inc)}</div></div>
       <div class="metric"><div class="metric-lbl">本月支出</div><div class="metric-val c-exp">${fmt(exp)}</div></div>
       <div class="metric"><div class="metric-lbl">結餘</div><div class="metric-val ${bal>=0?'c-pos':'c-neg'}">${fmt(bal)}</div></div>
-      <div class="metric"><div class="metric-lbl">記錄筆數</div><div class="metric-val c-n" style="font-size:15px">${rs.length} 筆</div></div>
+      <div class="metric"><div class="metric-lbl">共 ${rs.length} 筆</div><div class="metric-val c-n" style="font-size:18px">${rs.filter(r=>r.type==='income').length}收 / ${rs.filter(r=>r.type==='expense').length}支</div></div>
     </div>
-    ${upcomingSpec.length?`
     <div class="card">
-      <div class="card-title">📅 本月特別日子</div>
-      ${upcomingSpec.map(s=>`<div class="rec-row">
-        <div class="rec-left"><span class="spec-emoji">${s.emoji}</span>
-          <div><div class="rec-name">${s.name}</div><div class="rec-sub">${s.date.slice(5).replace('-','月')}日</div></div>
-        </div>
-      </div>`).join('')}
-    </div>`:''}
+      <div class="card-title">📅 本月假日與特別日子</div>
+      ${hasCalInfo?(
+        mHols.map(h=>`<div class="rec-row"><div class="rec-left"><span style="font-size:24px;margin-right:10px">🎌</span><div><div class="rec-name">${h.name}</div><div class="rec-sub">${mo}月${h.day}日・國定假日</div></div></div></div>`).join('')+
+        mSpec.map(s=>`<div class="rec-row"><div class="rec-left"><span style="font-size:24px;margin-right:10px">${s.emoji}</span><div><div class="rec-name">${s.name}</div><div class="rec-sub">${mo}月${s.day}日・特別日子</div></div></div></div>`).join('')
+      ):'<div style="text-align:center;color:var(--text3);padding:12px 0;font-size:16px">本月無假日或特別日子</div>'}
+    </div>
     <div class="card">
       <div class="card-title">支出分類</div>
       <div class="legend">${cats.map((c,i)=>`<span class="leg"><span class="leg-dot" style="background:${colors[i]}"></span>${c} ${total?Math.round(cm[c]/total*100):0}%</span>`).join('')||'<span style="color:var(--text3);font-size:12px">本月尚無支出</span>'}</div>
@@ -605,6 +612,21 @@ async function doDelFixed(id){
   r3();
 }
 
+
+function buildSpecList(){
+  if(!specials.length) return '<div class="empty">尚未新增特別日子</div>';
+  return specials.slice().sort((a,b)=>a.date.slice(5).localeCompare(b.date.slice(5))).map(function(s){
+    const mo2=parseInt(s.date.slice(5,7)), dy2=parseInt(s.date.slice(8));
+    return '<div class="spec-item">'
+      +'<div style="display:flex;align-items:center">'
+      +'<span style="font-size:28px;margin-right:12px">'+s.emoji+'</span>'
+      +'<div><div class="spec-name">'+s.name+'</div>'
+      +'<div class="spec-date">每年 '+mo2+'月'+dy2+'日</div></div></div>'
+      +'<button class="txn-del" style="font-size:22px" data-id="'+s.id+'" onclick="delSpec(this.dataset.id)">×</button>'
+      +'</div>';
+  }).join('');
+}
+
 // ── Tab 4 Calendar ───────────────────────────
 function r4(){
   const y=curM.getFullYear(), m=curM.getMonth();
@@ -675,50 +697,40 @@ function r4(){
       </div>
     </div>
     <div class="card">
-      <div class="card-title">特別日子清單
-        <button style="background:none;border:none;color:var(--blue);font-size:13px;cursor:pointer" onclick="openSpecModal()">新增</button>
-      </div>
-      ${specials.length?specials.slice().sort((a,b)=>a.date.slice(5).localeCompare(b.date.slice(5))).map(s=>`
-        <div class="spec-item">
-          <div style="display:flex;align-items:center">
-            <span class="spec-emoji">${s.emoji}</span>
-            <div><div class="spec-name">${s.name}</div><div class="spec-date">${s.date.slice(5).replace('-','月')}日（每年）</div></div>
-          </div>
-          <button class="txn-del" onclick="delSpec('${s.id}')">×</button>
-        </div>`).join(''):'<div class="empty">尚未新增特別日子</div>'}
+      <div class="card-title">特別日子管理 <button style="background:none;border:none;color:var(--blue);font-size:16px;cursor:pointer;font-weight:700" onclick="openSpecModal()">＋ 新增</button></div>
+      ${buildSpecList()}
     </div>`;
 }
 
 function openDayDetail(ds){
-  const dayRecs=recs.filter(r=>String(r.date)===ds);
   const md=ds.slice(5);
   const holName=TW_HOLIDAYS[ds];
-  const specItem=specials.find(s=>s.date.slice(5)===md);
-  const inc=dayRecs.filter(r=>r.type==='income').reduce((s,r)=>s+Number(r.amount),0);
-  const exp=dayRecs.filter(r=>r.type==='expense').reduce((s,r)=>s+Number(r.amount),0);
-  const hasTxn=dayRecs.length>0;
+  const specItems=specials.filter(s=>s.date.slice(5)===md);
 
-  let html='<button class="close-x" onclick="closeOv()">×</button>';
-  html+='<div class="modal-title">'+ds.replace(/-/g,'/')+'</div>';
-  if(holName) html+='<div style="background:var(--holiday);border:.5px solid var(--holiday-border);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:15px;font-weight:600">🎌 '+holName+'</div>';
-  if(specItem) html+='<div style="background:var(--special);border:.5px solid var(--special-border);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:15px;font-weight:600">'+specItem.emoji+' '+specItem.name+'</div>';
-  if(hasTxn){
-    html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">';
-    if(inc) html+='<div style="background:var(--surface);border:.5px solid var(--border);border-radius:10px;padding:10px;text-align:center"><div style="font-size:12px;color:var(--text3);margin-bottom:4px">收入</div><div style="font-size:16px;font-weight:700;color:var(--green)">+'+fmt(inc)+'</div></div>';
-    if(exp) html+='<div style="background:var(--surface);border:.5px solid var(--border);border-radius:10px;padding:10px;text-align:center"><div style="font-size:12px;color:var(--text3);margin-bottom:4px">支出</div><div style="font-size:16px;font-weight:700;color:var(--red)">-'+fmt(exp)+'</div></div>';
-    const bal=inc-exp;
-    html+='<div style="background:var(--surface);border:.5px solid var(--border);border-radius:10px;padding:10px;text-align:center"><div style="font-size:12px;color:var(--text3);margin-bottom:4px">結餘</div><div style="font-size:16px;font-weight:700;color:'+(bal>=0?'var(--green)':'var(--red)')+'">'+  (bal>=0?'+':'')+fmt(bal)+'</div></div>';
-    html+='</div>';
-    html+='<div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px">收支明細</div>';
-    html+='<div class="txn-list">'+dayRecs.sort((a,b)=>a.type.localeCompare(b.type)).map(r=>txnRow(r,true)).join('')+'</div>';
+  if(!holName && specItems.length===0){
+    pendingDate=ds; openAdd(); return;
   }
-  if(!hasTxn&&!holName&&!specItem) html+='<div class="empty">當日無資料</div>';
-  html+='<button class="save-btn" style="margin-top:14px" onclick="setPendingDate(this)">＋ 新增當日記錄</button>';
+
+  const parts=ds.split('-');
+  let html='<button class="close-x" onclick="closeOv()">×</button>';
+  html+='<div class="modal-title">'+parseInt(parts[1])+'月'+parseInt(parts[2])+'日</div>';
+  if(holName){
+    html+='<div style="background:var(--holiday);border:2px solid var(--holiday-border);border-radius:14px;padding:18px;margin-bottom:12px">';
+    html+='<div style="font-size:15px;color:#885500;margin-bottom:8px;font-weight:700;letter-spacing:.5px">🎌 國定假日</div>';
+    html+='<div style="font-size:26px;font-weight:800;color:#663300">'+holName+'</div>';
+    html+='</div>';
+  }
+  specItems.forEach(function(s){
+    html+='<div style="background:var(--special);border:2px solid var(--special-border);border-radius:14px;padding:18px;margin-bottom:12px">';
+    html+='<div style="font-size:15px;color:#1a5fa5;margin-bottom:8px;font-weight:700;letter-spacing:.5px">✨ 特別日子</div>';
+    html+='<div style="font-size:26px;font-weight:800;color:#0c3a7c">'+s.emoji+' '+s.name+'</div>';
+    html+='</div>';
+  });
+  html+='<button class="save-btn" style="margin-top:10px" onclick="setPendingDate(this)">＋ 新增當日記錄</button>';
   document.getElementById('mbox').dataset.date=ds;
   document.getElementById('mbox').innerHTML=html;
   document.getElementById('ov').classList.add('show');
 }
-
 
 // ── Special days ─────────────────────────────
 function openSpecModal(){
