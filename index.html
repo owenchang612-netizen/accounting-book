@@ -251,6 +251,7 @@ let pieC=null, barC=null;
 let eType='expense', eCat='', rType='expense';
 let selEmoji='🎂';
 let darkMode=localStorage.getItem('darkMode')==='1';
+let pendingDate=null;
 function applyDark(){
   document.documentElement.setAttribute('data-theme',darkMode?'dark':'light');
   const btn=document.getElementById('darkBtn');
@@ -697,25 +698,26 @@ function openDayDetail(ds){
   const exp=dayRecs.filter(r=>r.type==='expense').reduce((s,r)=>s+Number(r.amount),0);
   const hasTxn=dayRecs.length>0;
 
-  // Sort: 國定假日 > 特別日子 > 總數 > 細項
-  document.getElementById('mbox').innerHTML=`
-    <button class="close-x" onclick="closeOv()">×</button>
-    <div class="modal-title">${ds.replace(/-/g,'/')} </div>
-    ${holName?`<div style="background:var(--holiday);border:.5px solid var(--holiday-border);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:15px;font-weight:600">🎌 ${holName}</div>`:''}
-    ${specItem?`<div style="background:var(--special);border:.5px solid var(--special-border);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:15px;font-weight:600">${specItem.emoji} ${specItem.name}</div>`:''}
-    ${hasTxn?`
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
-        ${inc?`<div style="background:var(--surface);border:.5px solid var(--border);border-radius:10px;padding:10px;text-align:center"><div style="font-size:12px;color:var(--text3);margin-bottom:4px">收入</div><div style="font-size:16px;font-weight:700;color:var(--green)">+${fmt(inc)}</div></div>`:''}
-        ${exp?`<div style="background:var(--surface);border:.5px solid var(--border);border-radius:10px;padding:10px;text-align:center"><div style="font-size:12px;color:var(--text3);margin-bottom:4px">支出</div><div style="font-size:16px;font-weight:700;color:var(--red)">-${fmt(exp)}</div></div>`:''}
-        <div style="background:var(--surface);border:.5px solid var(--border);border-radius:10px;padding:10px;text-align:center"><div style="font-size:12px;color:var(--text3);margin-bottom:4px">結餘</div><div style="font-size:16px;font-weight:700;color:${inc-exp>=0?'var(--green)':'var(--red)'}">${inc-exp>=0?'+':''}${fmt(inc-exp)}</div></div>
-      </div>
-      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px">收支明細</div>
-      <div class="txn-list">${dayRecs.sort((a,b)=>a.type.localeCompare(b.type)).map(r=>txnRow(r,true)).join('')}</div>`
-    :''}
-    ${!hasTxn&&!holName&&!specItem?'<div class="empty">當日無資料</div>':''}
-    <button class="save-btn" style="margin-top:14px" onclick="closeOv();setTimeout(()=>{openAdd();document.getElementById&&(document.getElementById(\'fd\')&&(document.getElementById(\'fd\').value=\'${ds}\'))},50)">＋ 新增當日記錄</button>`;
+  let html='<button class="close-x" onclick="closeOv()">×</button>';
+  html+='<div class="modal-title">'+ds.replace(/-/g,'/')+'</div>';
+  if(holName) html+='<div style="background:var(--holiday);border:.5px solid var(--holiday-border);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:15px;font-weight:600">🎌 '+holName+'</div>';
+  if(specItem) html+='<div style="background:var(--special);border:.5px solid var(--special-border);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:15px;font-weight:600">'+specItem.emoji+' '+specItem.name+'</div>';
+  if(hasTxn){
+    html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">';
+    if(inc) html+='<div style="background:var(--surface);border:.5px solid var(--border);border-radius:10px;padding:10px;text-align:center"><div style="font-size:12px;color:var(--text3);margin-bottom:4px">收入</div><div style="font-size:16px;font-weight:700;color:var(--green)">+'+fmt(inc)+'</div></div>';
+    if(exp) html+='<div style="background:var(--surface);border:.5px solid var(--border);border-radius:10px;padding:10px;text-align:center"><div style="font-size:12px;color:var(--text3);margin-bottom:4px">支出</div><div style="font-size:16px;font-weight:700;color:var(--red)">-'+fmt(exp)+'</div></div>';
+    const bal=inc-exp;
+    html+='<div style="background:var(--surface);border:.5px solid var(--border);border-radius:10px;padding:10px;text-align:center"><div style="font-size:12px;color:var(--text3);margin-bottom:4px">結餘</div><div style="font-size:16px;font-weight:700;color:'+(bal>=0?'var(--green)':'var(--red)')+'">'+  (bal>=0?'+':'')+fmt(bal)+'</div></div>';
+    html+='</div>';
+    html+='<div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px">收支明細</div>';
+    html+='<div class="txn-list">'+dayRecs.sort((a,b)=>a.type.localeCompare(b.type)).map(r=>txnRow(r,true)).join('')+'</div>';
+  }
+  if(!hasTxn&&!holName&&!specItem) html+='<div class="empty">當日無資料</div>';
+  html+='<button class="save-btn" style="margin-top:14px" onclick="pendingDate=''+ds+'';closeOv();setTimeout(openAdd,100)">＋ 新增當日記錄</button>';
+  document.getElementById('mbox').innerHTML=html;
   document.getElementById('ov').classList.add('show');
 }
+
 
 // ── Special days ─────────────────────────────
 function openSpecModal(){
@@ -759,23 +761,25 @@ function delSpec(id){
 // ── Add Record ───────────────────────────────
 function openAdd(){
   eType='expense';eCat='';
-  const today=new Date().toISOString().split('T')[0];
-  document.getElementById('mbox').innerHTML=`
-    <button class="close-x" onclick="closeOv()">×</button>
-    <div class="modal-title">新增記錄</div>
-    <div class="type-row">
-      <button class="type-btn ae" id="be" onclick="setET('expense')">支出</button>
-      <button class="type-btn" id="bi" onclick="setET('income')">收入</button>
-    </div>
-    <label class="flabel">金額（NT$）</label>
-    <input class="finput" type="number" id="fa" placeholder="0" min="0" inputmode="numeric">
-    <label class="flabel">類別</label>
-    <div class="cat-grid" id="cg">${buildCatBtns('expense')}</div>
-    <label class="flabel">日期</label>
-    <input class="finput" type="date" id="fd" value="${today}">
-    <label class="flabel">備註（可加 #標籤）</label>
-    <input class="finput" type="text" id="fn" placeholder="例：午餐 #外食">
-    <button class="save-btn" onclick="saveRec()">儲存</button>`;
+  const today=pendingDate||new Date().toISOString().split('T')[0];
+  pendingDate=null;
+  const html='<button class="close-x" onclick="closeOv()">×</button>'
+    +'<div class="modal-title">新增記錄</div>'
+    +'<div class="type-row">'
+    +'<button class="type-btn ae" id="be" onclick="setET('expense')">支出</button>'
+    +'<button class="type-btn" id="bi" onclick="setET('income')">收入</button>'
+    +'</div>'
+    +'<label class="flabel">金額（NT$）</label>'
+    +'<input class="finput" type="number" id="fa" placeholder="0" min="0" inputmode="numeric">'
+    +'<label class="flabel">類別</label>'
+    +'<div class="cat-grid" id="cg"></div>'
+    +'<label class="flabel">日期</label>'
+    +'<input class="finput" type="date" id="fd" value="'+today+'">'
+    +'<label class="flabel">備註（可加 #標籤）</label>'
+    +'<input class="finput" type="text" id="fn" placeholder="例：午餐 #外食">'
+    +'<button class="save-btn" onclick="saveRec()">儲存</button>';
+  document.getElementById('mbox').innerHTML=html;
+  document.getElementById('cg').innerHTML=buildCatBtns('expense');
   document.getElementById('ov').classList.add('show');
 }
 function buildCatBtns(type){
@@ -797,22 +801,23 @@ function openEditRec(id){
   if(!r)return;
   editRecId=id;
   eType=r.type;eCat=r.cat;
-  document.getElementById('mbox').innerHTML=`
-    <button class="close-x" onclick="closeOv()">×</button>
-    <div class="modal-title">編輯記錄</div>
-    <div class="type-row">
-      <button class="type-btn ${r.type==='expense'?'ae':''}" id="be" onclick="setET('expense')">支出</button>
-      <button class="type-btn ${r.type==='income'?'ai':''}" id="bi" onclick="setET('income')">收入</button>
-    </div>
-    <label class="flabel">金額（NT$）</label>
-    <input class="finput" type="number" id="fa" value="${r.amount}" inputmode="numeric">
-    <label class="flabel">類別</label>
-    <div class="cat-grid" id="cg">${buildCatBtns(r.type)}</div>
-    <label class="flabel">日期</label>
-    <input class="finput" type="date" id="fd" value="${r.date}">
-    <label class="flabel">備註</label>
-    <input class="finput" type="text" id="fn" value="${r.note||''}">
-    <button class="save-btn" onclick="saveEdit()">儲存修改</button>`;
+  const html='<button class="close-x" onclick="closeOv()">×</button>'
+    +'<div class="modal-title">編輯記錄</div>'
+    +'<div class="type-row">'
+    +'<button class="type-btn '+(r.type==='expense'?'ae':'')+'" id="be" onclick="setET('expense')">支出</button>'
+    +'<button class="type-btn '+(r.type==='income'?'ai':'')+'" id="bi" onclick="setET('income')">收入</button>'
+    +'</div>'
+    +'<label class="flabel">金額（NT$）</label>'
+    +'<input class="finput" type="number" id="fa" value="'+r.amount+'" inputmode="numeric">'
+    +'<label class="flabel">類別</label>'
+    +'<div class="cat-grid" id="cg"></div>'
+    +'<label class="flabel">日期</label>'
+    +'<input class="finput" type="date" id="fd" value="'+r.date+'">'
+    +'<label class="flabel">備註</label>'
+    +'<input class="finput" type="text" id="fn" value="'+(r.note||'')+'">'
+    +'<button class="save-btn" onclick="saveEdit()">儲存修改</button>';
+  document.getElementById('mbox').innerHTML=html;
+  document.getElementById('cg').innerHTML=buildCatBtns(r.type);
   document.getElementById('ov').classList.add('show');
 }
 
