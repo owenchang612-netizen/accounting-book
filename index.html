@@ -513,8 +513,8 @@ function r2Monthly(){
         const maxAmt=Math.max(...months.map(x=>x.exp),1);
         return `<div class="daily-row">
           <span class="day-lbl" style="width:36px">${m.lbl}</span>
-          <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(m.exp/maxAmt*100)}%;background:${bal>=0?'var(--blue)':'#e24b4a'}"></div></div>
-          <span class="day-val" style="width:80px;color:${bal>=0?'var(--green)':'var(--red)'}${bal>=0?''}">${bal>=0?'+':''}${fmt(bal)}</span>
+          <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(m.exp/maxAmt*100)}%;background:${bal>=0?`var(--blue)`:`#e24b4a`}"></div></div>
+          <span class="day-val" style="width:80px;color:${bal>=0?`var(--green)`:`var(--red)`}">${bal>=0?'+':''}${fmt(bal)}</span>
         </div>`;
       }).join('')||'<div class="empty">尚無歷史資料</div>'}
     </div>`;
@@ -566,8 +566,8 @@ function r2Yearly(){
         const maxE=Math.max(...expData,1);
         return `<div class="daily-row">
           <span class="day-lbl" style="width:44px;font-size:12px">${y}</span>
-          <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(yearMap[y].exp/maxE*100)}%;background:${bal>=0?'var(--blue)':'#e24b4a'}"></div></div>
-          <span class="day-val" style="width:90px;color:${bal>=0?'var(--green)':'var(--red)'}">${bal>=0?'+':''}${fmt(bal)}</span>
+          <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(yearMap[y].exp/maxE*100)}%;background:${bal>=0?`var(--blue)`:`#e24b4a`}"></div></div>
+          <span class="day-val" style="width:90px;color:${bal>=0?`var(--green)`:`var(--red)`}">${bal>=0?'+':''}${fmt(bal)}</span>
         </div>`;
       }).join(''):'<div class="empty">尚無年度資料</div>'}
     </div>`;
@@ -713,7 +713,8 @@ function openDayDetail(ds){
     html+='<div class="txn-list">'+dayRecs.sort((a,b)=>a.type.localeCompare(b.type)).map(r=>txnRow(r,true)).join('')+'</div>';
   }
   if(!hasTxn&&!holName&&!specItem) html+='<div class="empty">當日無資料</div>';
-  html+='<button class="save-btn" style="margin-top:14px" onclick="pendingDate=''+ds+'';closeOv();setTimeout(openAdd,100)">＋ 新增當日記錄</button>';
+  html+='<button class="save-btn" style="margin-top:14px" onclick="setPendingDate(this)">＋ 新增當日記錄</button>';
+  document.getElementById('mbox').dataset.date=ds;
   document.getElementById('mbox').innerHTML=html;
   document.getElementById('ov').classList.add('show');
 }
@@ -766,8 +767,8 @@ function openAdd(){
   const html='<button class="close-x" onclick="closeOv()">×</button>'
     +'<div class="modal-title">新增記錄</div>'
     +'<div class="type-row">'
-    +'<button class="type-btn ae" id="be" onclick="setET('expense')">支出</button>'
-    +'<button class="type-btn" id="bi" onclick="setET('income')">收入</button>'
+    +'<button class="type-btn ae" id="be" onclick="setET(&quot;expense&quot;)">支出</button>'
+    +'<button class="type-btn" id="bi" onclick="setET(&quot;income&quot;)">收入</button>'
     +'</div>'
     +'<label class="flabel">金額（NT$）</label>'
     +'<input class="finput" type="number" id="fa" placeholder="0" min="0" inputmode="numeric">'
@@ -804,8 +805,8 @@ function openEditRec(id){
   const html='<button class="close-x" onclick="closeOv()">×</button>'
     +'<div class="modal-title">編輯記錄</div>'
     +'<div class="type-row">'
-    +'<button class="type-btn '+(r.type==='expense'?'ae':'')+'" id="be" onclick="setET('expense')">支出</button>'
-    +'<button class="type-btn '+(r.type==='income'?'ai':'')+'" id="bi" onclick="setET('income')">收入</button>'
+    +'<button class="type-btn '+(r.type==='expense'?'ae':'')+'" id="be" onclick="setET(&quot;expense&quot;)">支出</button>'
+    +'<button class="type-btn '+(r.type==='income'?'ai':'')+'" id="bi" onclick="setET(&quot;income&quot;)">收入</button>'
     +'</div>'
     +'<label class="flabel">金額（NT$）</label>'
     +'<input class="finput" type="number" id="fa" value="'+r.amount+'" inputmode="numeric">'
@@ -1010,6 +1011,12 @@ async function saveFixed(){
   closeOv();r3();
 }
 
+function setPendingDate(btn){
+  const ds=btn.closest('.modal').dataset.date||'';
+  pendingDate=ds||null;
+  closeOv();
+  setTimeout(openAdd,100);
+}
 function closeOv(){document.getElementById('ov').classList.remove('show');}
 document.getElementById('ov').addEventListener('click',e=>{if(e.target===e.currentTarget)closeOv();});
 
