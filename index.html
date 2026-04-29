@@ -1009,16 +1009,8 @@ function closeOv(){document.getElementById('ov').classList.remove('show');}
 document.getElementById('ov').addEventListener('click',e=>{if(e.target===e.currentTarget)closeOv();});
 
 // ── Init ─────────────────────────────────────
-if(API_URL==='YOUR_APPS_SCRIPT_DEPLOY_URL'){
-  syncStatus('err','離線模式（未設定API）');
-  recs=JSON.parse(localStorage.getItem('recs_'+mk(curM))||'[]');
-  fixeds=JSON.parse(localStorage.getItem('fixeds')||'[]');
-  applyDark();
-  renderAll();
-}else{
-  applyDark();
-  loadMonth();
-}
+applyDark();
+loadMonth();
 </script>
 </body>
 </html>
