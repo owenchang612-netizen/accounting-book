@@ -183,7 +183,7 @@ select.finput{appearance:none}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbyAWE7bXbAKXBPovd0jDXVjCtq0vD3WxVDttqzkLdchWD9QCbDVGbfV3FHE51KwhLSo/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyqheUaW0H4kwDRHT2QYQsV5sQ-0yN6Ocp2u1SogE1DP01zz30G7OGqyx0e8dhXesV-/exec';
 
 const EXP_CATS=[
   {n:'伙食費',e:'🍱'},{n:'買菜費用',e:'🛒'},{n:'日用雜貨',e:'🧴'},
@@ -367,7 +367,7 @@ function r0(){
     <div class="card">
       <div class="card-title">📅 本月假日與特別日子</div>
       ${hasCalInfo?(
-        mHols.map(h=>`<div class="rec-row"><div class="rec-left"><span style="font-size:24px;margin-right:10px">🎌</span><div><div class="rec-name">${h.name}</div><div class="rec-sub">${mo}月${h.day}日・國定假日</div></div></div></div>`).join('')+
+        mHols.map(h=>`<div class="rec-row"><div class="rec-left"><span style="font-size:24px;margin-right:10px">🇹🇼</span><div><div class="rec-name">${h.name}</div><div class="rec-sub">${mo}月${h.day}日・國定假日</div></div></div></div>`).join('')+
         mSpec.map(s=>`<div class="rec-row"><div class="rec-left"><span style="font-size:24px;margin-right:10px">${s.emoji}</span><div><div class="rec-name">${s.name}</div><div class="rec-sub">${mo}月${s.day}日・特別日子</div></div></div></div>`).join('')
       ):'<div style="text-align:center;color:var(--text3);padding:12px 0;font-size:16px">本月無假日或特別日子</div>'}
     </div>
@@ -716,7 +716,7 @@ function openDayDetail(ds){
   html+='<div class="modal-title">'+parseInt(parts[1])+'月'+parseInt(parts[2])+'日</div>';
   if(holName){
     html+='<div style="background:var(--holiday);border:2px solid var(--holiday-border);border-radius:14px;padding:18px;margin-bottom:12px">';
-    html+='<div style="font-size:15px;color:#885500;margin-bottom:8px;font-weight:700;letter-spacing:.5px">🎌 國定假日</div>';
+    html+='<div style="font-size:15px;color:#885500;margin-bottom:8px;font-weight:700;letter-spacing:.5px">🇹🇼 國定假日</div>';
     html+='<div style="font-size:26px;font-weight:800;color:#663300">'+holName+'</div>';
     html+='</div>';
   }
