@@ -281,16 +281,41 @@ async function api(action,data={}){
 }
 async function loadMonth(){
   const m=mk(curM);
-  syncStatus('ing','載入中…');
-  try{
-    recs=await api('getRecords',{month:m});
-    fixeds=await api('getFixed');
-    syncStatus('ok','已同步 Google Sheets');
-  }catch(e){
-    recs=JSON.parse(localStorage.getItem('recs_'+m)||'[]');
-    fixeds=JSON.parse(localStorage.getItem('fixeds')||'[]');
+  // Always load local cache first so UI never shows empty
+  const localRecs=JSON.parse(localStorage.getItem('recs_'+m)||'[]');
+  const localFixeds=JSON.parse(localStorage.getItem('fixeds')||'[]');
+  recs=localRecs;
+  fixeds=localFixeds;
+  renderAll(); // show local data immediately
+
+  // Then try to sync with API in background
+  if(API_URL==='YOUR_APPS_SCRIPT_DEPLOY_URL'){
+    syncStatus('err','離線模式（未設定API）');
+    return;
   }
-  renderAll();
+  syncStatus('ing','同步中…');
+  try{
+    const [apiRecs, apiFixeds]=await Promise.all([
+      api('getRecords',{month:m}),
+      api('getFixed')
+    ]);
+    // Only use API data if it's a valid non-empty array OR local is also empty
+    const useApiRecs = Array.isArray(apiRecs) && (apiRecs.length>0 || localRecs.length===0);
+    const useApiFixeds = Array.isArray(apiFixeds) && (apiFixeds.length>0 || localFixeds.length===0);
+    if(useApiRecs){
+      recs=apiRecs;
+      localStorage.setItem('recs_'+m, JSON.stringify(recs));
+    }
+    if(useApiFixeds){
+      fixeds=apiFixeds;
+      localStorage.setItem('fixeds', JSON.stringify(fixeds));
+    }
+    syncStatus('ok','已同步 Google Sheets');
+    renderAll(); // re-render with API data
+  }catch(e){
+    syncStatus('err','連線失敗，使用本機資料');
+    // recs and fixeds already set from local cache above
+  }
 }
 
 // ── Utils ────────────────────────────────────
@@ -422,9 +447,10 @@ function togChip(c){
 }
 async function doDelRec(id){
   if(!confirm('確定刪除這筆記錄？'))return;
-  try{await api('delRecord',{id});}catch(e){}
   recs=recs.filter(r=>String(r.id)!==String(id));
-  r1();
+  localStorage.setItem('recs_'+mk(curM), JSON.stringify(recs));
+  renderAll();
+  try{await api('delRecord',{id});}catch(e){}
 }
 
 // ── Tab 2 Trend ──────────────────────────────
@@ -892,17 +918,26 @@ async function saveRec(){
   const date=document.getElementById('fd').value;
   const note=document.getElementById('fn').value.trim();
   if(!amt||!date||!eCat){alert('請填入金額、日期並選擇類別');return;}
-  const rec={date,type:eType,cat:eCat,amount:amt,note};
-  syncStatus('ing','儲存中…');
+  const rec={id:Date.now().toString(),date,type:eType,cat:eCat,amount:amt,note};
+  // Save to localStorage immediately - data is never lost
+  const m=mk(curM);
+  if(String(rec.date).startsWith(m)) recs.unshift(rec);
+  localStorage.setItem('recs_'+m, JSON.stringify(recs));
+  closeOv(); renderAll(); // show immediately
+  // Then sync to API in background
+  syncStatus('ing','同步中…');
   try{
     const res=await api('addRecord',{record:rec});
-    rec.id=res.id;
+    if(res&&res.id){
+      // Update ID to API's ID
+      const idx=recs.findIndex(r=>String(r.id)===String(rec.id));
+      if(idx>=0) recs[idx].id=res.id;
+      localStorage.setItem('recs_'+m, JSON.stringify(recs));
+    }
     syncStatus('ok','已同步 Google Sheets');
-  }catch(e){rec.id=Date.now().toString();syncStatus('err','已存本機');}
-  const m=mk(curM);
-  if(String(rec.date).startsWith(m))recs.unshift(rec);
-  localStorage.setItem('recs_'+m,JSON.stringify(recs));
-  closeOv();renderAll();
+  }catch(e){
+    syncStatus('err','已存本機，下次同步時上傳');
+  }
 }
 
 // ── CSV Export ───────────────────────────────
