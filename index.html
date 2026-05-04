@@ -395,11 +395,11 @@ function r0(){
       <div class="metric"><div class="metric-lbl">共 ${rs.length} 筆</div><div class="metric-val c-n" style="font-size:18px">${rs.filter(r=>r.type==='income').length}收 / ${rs.filter(r=>r.type==='expense').length}支</div></div>
     </div>
     <div class="card">
-      <div class="card-title">📅 本月假日與特別日子</div>
+      <div class="card-title">📅 本月假日與重要日期</div>
       ${hasCalInfo?(
         mHols.map(h=>`<div class="rec-row"><div class="rec-left"><span style="font-size:24px;margin-right:10px">🇹🇼</span><div><div class="rec-name">${h.name}</div><div class="rec-sub">${mo}月${h.day}日・國定假日</div></div></div></div>`).join('')+
-        mSpec.map(s=>`<div class="rec-row"><div class="rec-left"><span style="font-size:24px;margin-right:10px">${s.emoji}</span><div><div class="rec-name">${s.name}</div><div class="rec-sub">${mo}月${s.day}日・特別日子</div></div></div></div>`).join('')
-      ):'<div style="text-align:center;color:var(--text3);padding:12px 0;font-size:16px">本月無假日或特別日子</div>'}
+        mSpec.map(s=>`<div class="rec-row"><div class="rec-left"><span style="font-size:24px;margin-right:10px">${s.emoji}</span><div><div class="rec-name">${s.name}</div><div class="rec-sub">${mo}月${s.day}日・重要日期</div></div></div></div>`).join('')
+      ):'<div style="text-align:center;color:var(--text3);padding:12px 0;font-size:16px">本月無假日或重要日期</div>'}
     </div>
     <div class="card">
       <div class="card-title">支出分類</div>
@@ -677,7 +677,7 @@ async function doDelFixed(id){
 
 
 function buildSpecList(){
-  if(!specials.length) return '<div class="empty">尚未新增特別日子</div>';
+  if(!specials.length) return '<div class="empty">尚未新增重要日期</div>';
   return specials.slice().sort((a,b)=>a.date.slice(5).localeCompare(b.date.slice(5))).map(function(s){
     const mo2=parseInt(s.date.slice(5,7)), dy2=parseInt(s.date.slice(8));
     return '<div class="spec-item">'
@@ -750,17 +750,17 @@ function r4(){
     <div class="card">
       <div class="card-title">
         月曆
-        <button style="background:none;border:none;color:var(--blue);font-size:13px;cursor:pointer" onclick="openSpecModal()">＋ 特別日子</button>
+        <button style="background:none;border:none;color:var(--blue);font-size:13px;cursor:pointer" onclick="openSpecModal()">＋ 重要日期</button>
       </div>
       <div class="cal-grid">${hdrs}${cells}</div>
       <div class="cal-legend">
         <span class="cal-leg"><span class="cal-leg-box" style="background:var(--holiday);border:.5px solid var(--holiday-border)"></span>國定假日</span>
-        <span class="cal-leg"><span class="cal-leg-box" style="background:var(--special);border:.5px solid var(--special-border)"></span>特別日子</span>
+        <span class="cal-leg"><span class="cal-leg-box" style="background:var(--special);border:.5px solid var(--special-border)"></span>重要日期</span>
         <span class="cal-leg"><span class="cal-leg-box" style="background:var(--blue);border-radius:50%;width:8px;height:8px"></span>今天</span>
       </div>
     </div>
     <div class="card">
-      <div class="card-title">特別日子管理 <button style="background:none;border:none;color:var(--blue);font-size:16px;cursor:pointer;font-weight:700" onclick="openSpecModal()">＋ 新增</button></div>
+      <div class="card-title">重要日期管理 <button style="background:none;border:none;color:var(--blue);font-size:16px;cursor:pointer;font-weight:700" onclick="openSpecModal()">＋ 新增</button></div>
       ${buildSpecList()}
     </div>`;
 }
@@ -785,7 +785,7 @@ function openDayDetail(ds){
   }
   specItems.forEach(function(s){
     html+='<div style="background:var(--special);border:2px solid var(--special-border);border-radius:14px;padding:18px;margin-bottom:12px">';
-    html+='<div style="font-size:15px;color:#1a5fa5;margin-bottom:8px;font-weight:700;letter-spacing:.5px">✨ 特別日子</div>';
+    html+='<div style="font-size:15px;color:#1a5fa5;margin-bottom:8px;font-weight:700;letter-spacing:.5px">✨ 重要日期</div>';
     html+='<div style="font-size:26px;font-weight:800;color:#0c3a7c">'+s.emoji+' '+s.name+'</div>';
     html+='</div>';
   });
@@ -800,7 +800,7 @@ function openSpecModal(){
   selEmoji='🎂';
   document.getElementById('mbox').innerHTML=`
     <button class="close-x" onclick="closeOv()">×</button>
-    <div class="modal-title">新增特別日子</div>
+    <div class="modal-title">新增重要日期</div>
     <label class="flabel">名稱（如：結婚紀念日）</label>
     <input class="finput" type="text" id="sn" placeholder="例：老婆生日">
     <label class="flabel">日期（每年重複）</label>
@@ -829,7 +829,7 @@ function saveSpec(){
 
 function delSpec(id){
   if(!confirm('確定刪除？'))return;
-  specials=specials.filter(s=>s.id!==id);
+  specials=specials.filter(s=>String(s.id)!==String(id));
   localStorage.setItem('specials',JSON.stringify(specials));
   r4();
 }
