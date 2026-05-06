@@ -12,27 +12,30 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <style>
 :root{
-  --bg:#e8f4fb;--surface:#f5faff;--border:rgba(50,102,173,0.13);
-  --text1:#1a1a1a;--text2:#555;--text3:#999;
-  --blue:#3266ad;--green:#3b6d11;--red:#a32d2d;
+  --bg:#B2D6D3;--surface:#ffffff;--border:rgba(0,0,0,0.10);
+  --text1:#111111;--text2:#333333;--text3:#777777;
+  --blue:#1a6fcc;--green:#3b6d11;--red:#a32d2d;
   --holiday:#fff8e6;--holiday-border:#f5a623;
-  --special:#ddeeff;--special-border:#3266ad;
+  --special:#e8f4f8;--special-border:#4397A1;
+  --yellow:#EBE1A4;--pink:#F2DAD9;
+  --tab-bg:#E0B499;--tab-text:#5a3010;--tab-active:#7a3800;--tab-active-bg:#c8955a;
   --radius:12px;--safe-b:env(safe-area-inset-bottom,0px);
-  --tab-bg:#dde3ec;--tab-text:#8899aa;--tab-active:#1a6fcc;--tab-active-bg:#eef5ff;
 }
 [data-theme="dark"]{
-  --bg:#0d1f2d;--surface:#152535;--border:rgba(100,170,220,0.15);
-  --text1:#f0f0f0;--text2:#99b8cc;--text3:#506070;
+  --bg:#1a3d42;--surface:#1e2e32;--border:rgba(67,151,161,0.25);
+  --text1:#e8f4f5;--text2:#aacfd4;--text3:#4a7a80;
+  --blue:#5ba3f5;--green:#6dbf6d;--red:#e05555;
   --holiday:#2a1f00;--holiday-border:#f5a623;
-  --special:#001a33;--special-border:#5b9bd5;
+  --special:#003340;--special-border:#4397A1;
   --tab-bg:#1a3d2a;--tab-text:#88c8a0;--tab-active:#ffffff;--tab-active-bg:#256040;
 }
 @media(prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#0d1f2d;--surface:#152535;--border:rgba(100,170,220,0.15);
-    --text1:#f0f0f0;--text2:#99b8cc;--text3:#506070;
+    --bg:#1a3d42;--surface:#1e2e32;--border:rgba(67,151,161,0.25);
+    --text1:#e8f4f5;--text2:#aacfd4;--text3:#4a7a80;
+    --blue:#5ba3f5;--green:#6dbf6d;--red:#e05555;
     --holiday:#2a1f00;--holiday-border:#f5a623;
-    --special:#001a33;--special-border:#5b9bd5;
+    --special:#003340;--special-border:#4397A1;
     --tab-bg:#1a3d2a;--tab-text:#88c8a0;--tab-active:#ffffff;--tab-active-bg:#256040;
   }
 }
@@ -40,23 +43,23 @@
 body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--text1);max-width:430px;margin:0 auto;min-height:100vh}
 button{font-family:inherit;cursor:pointer}
 
-.topbar{background:var(--surface);border-bottom:.5px solid var(--border);padding:14px 16px 0;position:sticky;top:0;z-index:50}
+.topbar{background:#B2D6D3;border-bottom:.5px solid rgba(0,0,0,0.10);padding:14px 16px 0;position:sticky;top:0;z-index:50}
 .topbar-row{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px}
 .nav-group{display:flex;align-items:center;gap:8px}
-.nav-btn{background:none;border:.5px solid var(--border);border-radius:8px;padding:5px 12px;font-size:18px;color:var(--text2)}
-.month-lbl{font-size:24px;font-weight:700;min-width:96px;text-align:center}
-.add-btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:18px;font-weight:700}
+.nav-btn{background:rgba(255,255,255,0.5);border:.5px solid rgba(0,0,0,0.15);border-radius:8px;padding:5px 12px;font-size:18px;color:#111111}
+.month-lbl{font-size:24px;font-weight:700;min-width:96px;text-align:center;color:#111111}
+.add-btn{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:6px 13px;font-size:14px;font-weight:600}
 .tabs{display:flex;background:var(--tab-bg)}
 .tab{flex:1;text-align:center;padding:12px 2px 14px;font-size:15px;color:var(--tab-text);border-bottom:3px solid transparent;font-weight:600;transition:background .2s,color .2s}
-.tab.on{color:var(--tab-active);border-bottom-color:var(--tab-active);background:var(--tab-active-bg);font-weight:800}
+.tab.on{color:#ffffff;border-bottom-color:#7a3800;background:var(--tab-active-bg);font-weight:800}
 .section{padding:14px 16px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.metric{background:var(--surface);border-radius:var(--radius);padding:13px 15px;border:.5px solid var(--border)}
-.metric-lbl{font-size:16px;color:var(--text3);margin-bottom:6px}
+.metric{background:#ffffff;border-radius:var(--radius);padding:13px 15px;border:.5px solid rgba(0,0,0,0.10)}
+.metric-lbl{font-size:16px;color:#555555;margin-bottom:6px}
 .metric-val{font-size:28px;font-weight:800}
 .c-inc{color:#185fa5}.c-exp{color:var(--red)}.c-pos{color:var(--green)}.c-neg{color:var(--red)}.c-n{color:var(--text1)}
-.card{background:var(--surface);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;border:.5px solid var(--border)}
-.card-title{font-size:18px;font-weight:700;color:var(--text2);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.card{background:#ffffff;border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;border:.5px solid rgba(0,0,0,0.10)}
+.card-title{font-size:18px;font-weight:700;color:#111111;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
 .legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
 .leg{display:flex;align-items:center;gap:5px;font-size:16px;color:var(--text2)}
 .leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
@@ -65,7 +68,7 @@ button{font-family:inherit;cursor:pointer}
 .txn{display:flex;align-items:center;gap:11px;padding:10px 14px;background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius)}
 .txn-ico{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
 .txn-info{flex:1;min-width:0}
-.txn-name{font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.txn-name{font-size:18px;color:#111111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .txn-meta{font-size:15px;color:var(--text3);margin-top:3px}
 .txn-amt{font-size:18px;font-weight:700;flex-shrink:0}
 .txn-del{background:none;border:none;color:var(--text3);font-size:18px;padding:0 2px;flex-shrink:0}
@@ -83,7 +86,7 @@ button{font-family:inherit;cursor:pointer}
 .rec-row:last-child{border-bottom:none}
 .rec-left{display:flex;align-items:center;gap:10px}
 .rec-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.rec-name{font-size:18px}
+.rec-name{font-size:18px;color:#111111}
 .rec-sub{font-size:15px;color:var(--text3);margin-top:2px}
 .rec-right{display:flex;align-items:center;gap:8px}
 .rec-amt{font-size:18px;font-weight:700}
@@ -143,7 +146,7 @@ select.finput{appearance:none}
 .sync-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px}
 .sync-ok{background:var(--green)}.sync-err{background:var(--red)}.sync-ing{background:#f5a623;animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.sync-bar{font-size:15px;color:var(--text3);padding:4px 16px 8px;display:flex;align-items:center}
+.sync-bar{font-size:15px;color:#333333;padding:4px 16px 8px;display:flex;align-items:center;background:#B2D6D3}
 .empty{text-align:center;color:var(--text3);font-size:17px;padding:22px 0}
 </style>
 </head>
@@ -447,8 +450,11 @@ function togChip(c){
 }
 async function doDelRec(id){
   if(!confirm('確定刪除這筆記錄？'))return;
+  const hit=recs.find(r=>String(r.id)===String(id));
+  const recM=hit?hit.date.slice(0,7):mk(curM);
   recs=recs.filter(r=>String(r.id)!==String(id));
-  localStorage.setItem('recs_'+mk(curM), JSON.stringify(recs));
+  const stored=JSON.parse(localStorage.getItem('recs_'+recM)||'[]');
+  localStorage.setItem('recs_'+recM, JSON.stringify(stored.filter(r=>String(r.id)!==String(id))));
   renderAll();
   try{await api('delRecord',{id});}catch(e){}
 }
@@ -650,23 +656,30 @@ function r2Yearly(){
   ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmt(c.raw)}}},scales:{x:{ticks:{font:{size:12}}},y:{ticks:{callback:v=>'$'+Math.round(v/1000)+'k'}}}}});
 }
 function r3(){
-  document.getElementById('t3').innerHTML=`
-    <div class="card">
-      <div class="card-title">固定收支項目</div>
-      ${fixeds.length?fixeds.slice().sort((a,b)=>a.day-b.day).map(f=>{
-        const c=f.type==='income'?'#3b6d11':'#a32d2d';
-        return `<div class="rec-row">
-          <div class="rec-left"><div class="rec-dot" style="background:${c}"></div>
-            <div><div class="rec-name">${f.name}</div><div class="rec-sub">${f.date?f.date:('每月'+f.day+'日')}・${f.cat}</div></div>
-          </div>
-          <div class="rec-right">
-            <div class="rec-amt" style="color:${c}">${f.type==='income'?'+':'-'}${fmt(f.amount)}</div>
-            <button class="txn-del" onclick="doDelFixed('${f.id}')">×</button>
-          </div>
-        </div>`;
-      }).join(''):'<div class="empty">尚無固定項目</div>'}
-    </div>
-    <button class="ghost-btn" onclick="openFixed()">＋ 新增固定項目</button>`;
+  const allFixed=[];
+  const seen=new Set();
+  Object.keys(localStorage).filter(k=>k.startsWith('recs_')).forEach(k=>{
+    JSON.parse(localStorage.getItem(k)||'[]').filter(r=>r.fixed).forEach(r=>{
+      if(!seen.has(String(r.id))){seen.add(String(r.id));allFixed.push(r);}
+    });
+  });
+  recs.filter(r=>r.fixed).forEach(r=>{
+    if(!seen.has(String(r.id))){seen.add(String(r.id));allFixed.push(r);}
+  });
+  allFixed.sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  const fixedInc=allFixed.filter(r=>r.type==='income').reduce((s,r)=>s+Number(r.amount),0);
+  const fixedExp=allFixed.filter(r=>r.type==='expense').reduce((s,r)=>s+Number(r.amount),0);
+  let html='<div class="grid2" style="margin-bottom:12px">'
+    +'<div class="metric"><div class="metric-lbl">固定收入合計</div><div class="metric-val c-inc">'+fmt(fixedInc)+'</div></div>'
+    +'<div class="metric"><div class="metric-lbl">固定支出合計</div><div class="metric-val c-exp">'+fmt(fixedExp)+'</div></div>'
+    +'</div>'
+    +'<div class="card"><div class="card-title">固定收支記錄</div>'
+    +(allFixed.length
+      ?'<div class="txn-list">'+allFixed.map(r=>txnRow(r,true)).join('')+'</div>'
+      :'<div class="empty">尚無固定收支記錄<br><br>新增帳務時勾選「標記為固定收支」即可</div>'
+    )
+    +'</div>';
+  document.getElementById('t3').innerHTML=html;
 }
 async function doDelFixed(id){
   if(!confirm('確定刪除？'))return;
@@ -853,6 +866,7 @@ function openAdd(){
     +'<input class="finput" type="date" id="fd" value="'+today+'">'
     +'<label class="flabel">備註（可加 #標籤）</label>'
     +'<input class="finput" type="text" id="fn" placeholder="例：午餐 #外食">'
+    +'<div style="display:flex;align-items:center;gap:10px;margin-top:16px"><input type="checkbox" id="fx" style="width:20px;height:20px;cursor:pointer"><label for="fx" style="font-size:17px;color:var(--text1);cursor:pointer">標記為固定收支</label></div>'
     +'<button class="save-btn" onclick="saveRec()">儲存</button>';
   document.getElementById('mbox').innerHTML=html;
   document.getElementById('cg').innerHTML=buildCatBtns('expense');
@@ -891,6 +905,7 @@ function openEditRec(id){
     +'<input class="finput" type="date" id="fd" value="'+r.date+'">'
     +'<label class="flabel">備註</label>'
     +'<input class="finput" type="text" id="fn" value="'+(r.note||'')+'">'
+    +'<div style="display:flex;align-items:center;gap:10px;margin-top:16px"><input type="checkbox" id="fx" '+(r.fixed?'checked':'')+' style="width:20px;height:20px;cursor:pointer"><label for="fx" style="font-size:17px;color:var(--text1);cursor:pointer">標記為固定收支</label></div>'
     +'<button class="save-btn" onclick="saveEdit()">儲存修改</button>';
   document.getElementById('mbox').innerHTML=html;
   document.getElementById('cg').innerHTML=buildCatBtns(r.type);
@@ -904,7 +919,8 @@ async function saveEdit(){
   if(!amt||!date||!eCat){alert('請填入金額、日期並選擇類別');return;}
   // delete old + add new
   try{await api('delRecord',{id:editRecId});}catch(e){}
-  const rec={date,type:eType,cat:eCat,amount:amt,note};
+  const fxEl2=document.getElementById('fx');
+  const rec={date,type:eType,cat:eCat,amount:amt,note,fixed:fxEl2?fxEl2.checked:false};
   try{const res=await api('addRecord',{record:rec});rec.id=res.id;}catch(e){rec.id=Date.now().toString();}
   recs=recs.filter(r=>String(r.id)!==String(editRecId));
   recs.push(rec);
@@ -918,26 +934,27 @@ async function saveRec(){
   const date=document.getElementById('fd').value;
   const note=document.getElementById('fn').value.trim();
   if(!amt||!date||!eCat){alert('請填入金額、日期並選擇類別');return;}
-  const rec={id:Date.now().toString(),date,type:eType,cat:eCat,amount:amt,note};
-  // Save to localStorage immediately - data is never lost
-  const m=mk(curM);
-  if(String(rec.date).startsWith(m)) recs.unshift(rec);
-  localStorage.setItem('recs_'+m, JSON.stringify(recs));
-  closeOv(); renderAll(); // show immediately
-  // Then sync to API in background
+  const fxEl=document.getElementById('fx');
+  const rec={id:Date.now().toString(),date,type:eType,cat:eCat,amount:amt,note,fixed:fxEl?fxEl.checked:false};
+  // Save to CORRECT month based on record's date
+  const recMonth=date.slice(0,7);
+  const curMonth2=mk(curM);
+  const monthRecs=JSON.parse(localStorage.getItem('recs_'+recMonth)||'[]');
+  monthRecs.unshift(rec);
+  localStorage.setItem('recs_'+recMonth, JSON.stringify(monthRecs));
+  if(recMonth===curMonth2) recs=monthRecs;
+  closeOv(); renderAll();
   syncStatus('ing','同步中…');
   try{
     const res=await api('addRecord',{record:rec});
     if(res&&res.id){
-      // Update ID to API's ID
-      const idx=recs.findIndex(r=>String(r.id)===String(rec.id));
-      if(idx>=0) recs[idx].id=res.id;
-      localStorage.setItem('recs_'+m, JSON.stringify(recs));
+      const stored=JSON.parse(localStorage.getItem('recs_'+recMonth)||'[]');
+      const i2=stored.findIndex(r=>String(r.id)===String(rec.id));
+      if(i2>=0){stored[i2].id=res.id;localStorage.setItem('recs_'+recMonth,JSON.stringify(stored));}
+      if(recMonth===curMonth2){const li=recs.findIndex(r=>String(r.id)===String(rec.id));if(li>=0)recs[li].id=res.id;}
     }
     syncStatus('ok','已同步 Google Sheets');
-  }catch(e){
-    syncStatus('err','已存本機，下次同步時上傳');
-  }
+  }catch(e){syncStatus('err','已存本機，下次同步時上傳');}
 }
 
 // ── CSV Export ───────────────────────────────
